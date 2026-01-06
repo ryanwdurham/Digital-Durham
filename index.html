@@ -1,818 +1,1059 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Fake Store API — QA Checkout Tester</title>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
-* {
-  box-sizing: border-box;
-}
-
-body { 
-  margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  min-height: 100vh;
-  color: #e2e8f0;
-}
-
-header { 
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-  color: white;
-  padding: 32px 24px;
-  box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  animation: pulse 8s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-}
-
-header h1 { 
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  position: relative;
-  z-index: 1;
-}
-
-header p { 
-  margin: 8px 0 0;
-  opacity: 0.95;
-  font-size: 15px;
-  font-weight: 500;
-  position: relative;
-  z-index: 1;
-}
-
-main { 
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  padding: 24px;
-  max-width: 1600px;
-  margin: 0 auto;
-}
-
-.panel { 
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(100, 116, 139, 0.2);
-  transition: all 0.3s ease;
-}
-
-.panel:hover {
-  box-shadow: 0 12px 48px rgba(99, 102, 241, 0.2);
-  border-color: rgba(139, 92, 246, 0.3);
-}
-
-h2 { 
-  margin-top: 0;
-  font-size: 20px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  padding-bottom: 12px;
-  border-bottom: 2px solid rgba(139, 92, 246, 0.3);
-  letter-spacing: -0.3px;
-}
-
-button { 
-  padding: 10px 18px;
-  border-radius: 8px;
-  border: none;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-button:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-button.danger { 
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-button.danger:hover {
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
-}
-
-button.secondary { 
-  background: linear-gradient(135deg, #475569 0%, #334155 100%);
-  box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3);
-}
-
-button.secondary:hover {
-  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.5);
-}
-
-.products { 
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.product { 
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  border-radius: 12px;
-  padding: 16px;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.product::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #6366f1, #8b5cf6, #d946ef);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.product:hover::before {
-  transform: scaleX(1);
-}
-
-.product:hover {
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
-  transform: translateY(-4px);
-  border-color: rgba(139, 92, 246, 0.5);
-}
-
-.product img { 
-  height: 140px;
-  object-fit: contain;
-  display: block;
-  margin: auto;
-  border-radius: 8px;
-  padding: 8px;
-}
-
-.product b {
-  font-size: 14px;
-  color: #f1f5f9;
-  display: block;
-  margin: 12px 0 8px;
-  line-height: 1.4;
-}
-
-.price { 
-  color: #10b981;
-  font-weight: 700;
-  font-size: 18px;
-  text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
-}
-
-.cart-item { 
-  font-size: 13px;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 8px;
-  border: 1px solid rgba(100, 116, 139, 0.2);
-  transition: all 0.2s ease;
-}
-
-.cart-item:hover {
-  background: rgba(15, 23, 42, 0.7);
-  border-color: rgba(139, 92, 246, 0.3);
-}
-
-.cart-item b {
-  color: #a78bfa;
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.api-console { 
-  background: #0a0e1a;
-  color: #94a3b8;
-  padding: 16px;
-  border-radius: 12px;
-  font-family: 'JetBrains Mono', Consolas, monospace;
-  font-size: 12px;
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.api-console::-webkit-scrollbar {
-  width: 8px;
-}
-
-.api-console::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 4px;
-}
-
-.api-console::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 4px;
-}
-
-.api-console::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.7);
-}
-
-.api-console pre {
-  margin: 8px 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.pass { 
-  color: #10b981;
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
-}
-
-.fail { 
-  color: #ef4444;
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
-}
-
-footer { 
-  padding: 24px;
-  font-size: 13px;
-  text-align: center;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(10px);
-  color: #94a3b8;
-  font-style: italic;
-  border-top: 1px solid rgba(100, 116, 139, 0.2);
-}
-
-label {
-  font-size: 13px;
-  color: #cbd5e1;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  margin-left: 12px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-label:hover {
-  background: rgba(139, 92, 246, 0.1);
-}
-
-input[type="checkbox"] {
-  cursor: pointer;
-  width: 16px;
-  height: 16px;
-  accent-color: #8b5cf6;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-  align-items: center;
-}
-
-hr {
-  border: none;
-  border-top: 1px solid rgba(139, 92, 246, 0.3);
-  margin: 16px 0;
-}
-
-#cart {
-  min-height: 60px;
-}
-
-.empty-cart {
-  color: #64748b;
-  font-style: italic;
-  text-align: center;
-  padding: 24px;
-  font-size: 14px;
-}
-
-.product button {
-  margin-top: 8px;
-  margin-right: 4px;
-  font-size: 12px;
-  padding: 6px 12px;
-}
-
-.console-wrapper {
-  margin: 0 24px 24px;
-}
-
-/* Toast Notifications */
-.toast-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.toast {
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 16px 20px;
-  min-width: 300px;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: slideIn 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.toast::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: #6366f1;
-}
-
-.toast.success::before {
-  background: #10b981;
-}
-
-.toast.error::before {
-  background: #ef4444;
-}
-
-.toast.warning::before {
-  background: #f59e0b;
-}
-
-.toast-icon {
-  font-size: 24px;
-  flex-shrink: 0;
-}
-
-.toast-content {
-  flex: 1;
-  color: #e2e8f0;
-}
-
-.toast-title {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.toast-message {
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-.toast-close {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  font-size: 20px;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.toast-close:hover {
-  background: rgba(100, 116, 139, 0.2);
-  color: #fff;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOut {
-  to {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-}
-
-.toast.removing {
-  animation: slideOut 0.3s ease forwards;
-}
-
-@media (max-width: 1024px) {
-  main {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Durham - QA Engineer Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 3%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: #00ffff;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ffff, #0080ff);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Theme Picker Styles */
+        .theme-picker {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .theme-picker:hover {
+            border-color: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .theme-picker-label {
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        .theme-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .theme-color:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .theme-color.active {
+            border-color: white;
+            box-shadow: 0 0 15px currentColor;
+        }
+
+        .theme-color::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .theme-color.active::after {
+            border-color: currentColor;
+            opacity: 0.3;
+        }
+
+        /* Theme color options */
+        .theme-cyan { background: linear-gradient(135deg, #00ffff, #0080ff); color: #00ffff; }
+        .theme-purple { background: linear-gradient(135deg, #a855f7, #ec4899); color: #a855f7; }
+        .theme-green { background: linear-gradient(135deg, #10b981, #06b6d4); color: #10b981; }
+        .theme-orange { background: linear-gradient(135deg, #f97316, #eab308); color: #f97316; }
+        .theme-red { background: linear-gradient(135deg, #ef4444, #f43f5e); color: #ef4444; }
+        .theme-blue { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #3b82f6; }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 5% 6rem 5%;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(0, 128, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            color: #b0b0b0;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .cta {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #b0b0b0;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        .project-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #00ffff;
+        }
+
+        .project-card p {
+            color: #b0b0b0;
+            margin-bottom: 1rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-category {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .skill-category h3 {
+            color: #00ffff;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .skill-category ul {
+            list-style: none;
+        }
+
+        .skill-category li {
+            padding: 0.5rem 0;
+            color: #b0b0b0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .skill-category li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #00ffff;
+        }
+
+        .contact {
+            text-align: center;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-links a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-links a:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: #00ffff;
+            transform: translateY(-3px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10, 10, 10, 0.95);
+            color: #666;
+            border-top: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem 5%;
+                gap: 1rem;
+            }
+            
+            .theme-picker {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            nav ul {
+                width: 100%;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            nav ul li a {
+                font-size: 0.9rem;
+            }
+
+            .projects-grid, .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="toast-container" id="toastContainer"></div>
+    <nav>
+        <div class="theme-picker">
+            <div class="theme-picker-label">Theme</div>
+            <div class="theme-color theme-cyan active" data-primary="#00ffff" data-secondary="#0080ff" title="Cyan"></div>
+            <div class="theme-color theme-purple" data-primary="#a855f7" data-secondary="#ec4899" title="Purple"></div>
+            <div class="theme-color theme-green" data-primary="#10b981" data-secondary="#06b6d4" title="Green"></div>
+            <div class="theme-color theme-orange" data-primary="#f97316" data-secondary="#eab308" title="Orange"></div>
+            <div class="theme-color theme-red" data-primary="#ef4444" data-secondary="#f43f5e" title="Red"></div>
+            <div class="theme-color theme-blue" data-primary="#3b82f6" data-secondary="#8b5cf6" title="Blue"></div>
+        </div>
+        <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#highlights">Highlights</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#exploring">Exploring</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
 
-<header>
-  <h1>🛒 Fake Store API — QA Checkout Tester 💻</h1>
-  <p>API-first demo • Auth • Assertions • Failure handling</p>
-</header>
+    <section class="hero">
+        <h1>Ryan Durham</h1>
+        <p class="tagline">Senior QA Engineer | Device & App Testing Specialist | App & Software Development | 15+ Years Experience</p>
+        <a href="#highlights" class="cta">View My Work</a>
+        <img src="ryguy.png" alt="Ryan Durham" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; object-position: center top; margin: 2rem 0 2rem 0; border: 3px solid #00ffff; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);">
+    </section>
 
-<main>
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <p>
+                Seasoned QA and Test Engineer with over 15 years of experience testing hardware and software
+                across Android, iOS, and IoT ecosystems. I've successfully led end-to-end device testing for mobile
+                phones, tablets, smartwatches, AR smart glasses, and connected devices at companies like Meta, AT&T, Microsoft, and major tech vendors.
+            </p>
+            <p style="margin-top: 1rem;">
+                I'm passionate about ensuring seamless customer experiences through manual and automated testing,
+                bug triage, and cross-functional collaboration with global teams. My expertise spans from next-gen AR devices
+                to 5G mobile technology, always focused on data-driven quality improvements and continuous optimization.
+            </p>
+            <p style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 255, 0.1);">
+                <strong style="color: #00ffff;">Beyond the Tech:</strong> When I'm not diving into code or testing devices, 
+                you'll find me exploring the Pacific Northwest trails, creating music, or getting lost in a good book. 
+                I'm an avid camper and outdoor enthusiast who believes the best problem-solving often happens away from the screen. 
+                I'm constantly curious about emerging technologies and love staying on the cutting edge of what's next in tech.
+            </p>
+        </div>
+    </section>
 
-<div class="panel">
-  <h2>Products</h2>
-  <div class="button-group">
-    <button onclick="login()">🔐 Login</button>
-    <button onclick="loadProducts()">📦 Load Products</button>
-    <label>
-      <input type="checkbox" id="failToggle" /> Simulate API Failure
-    </label>
-  </div>
-  <div class="products" id="products"></div>
+    <section id="highlights" style="background: rgba(0, 0, 0, 0.3); padding: 5rem 5%;">
+        <h2>Career Highlights</h2>
+        <div class="about-content" style="max-width: 1000px; margin: 0 auto 3rem;">
+            <p style="font-size: 1.2rem; text-align: center;">
+                15+ years delivering results for industry leaders including <strong style="color: #00ffff;">Meta, AT&T, Microsoft, Samsung, Apple, Google, Nvidia, DirecTV, and other major tech vendors.</strong>
+            </p>
+        </div>
+
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h3 style="color: #00ffff; font-size: 1.5rem; margin-bottom: 2rem; text-align: center;">Key Product Launches & Certifications</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🥽</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">Meta AR Wearables</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">AR Project Orion & Ray-Ban Meta Smart Glasses</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📶</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">AT&T Networks</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">4G, LTE, and 5G network testing, certification, and performance optimization</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📱</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">Mobile Device Certification</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">Google Pixel, Apple iPhone/iPad, Samsung Galaxy devices and wearables</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎮</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">Nvidia GeForce NOW</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">5G network slicing for cloud gaming with enhanced bandwidth and lower latency</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛡️</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">FirstNet MCPTT</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">Mission-critical push-to-talk demos and validation for first responders</p>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎵</div>
+                    <h4 style="color: #00ffff; margin-bottom: 0.5rem;">Windows Media Player</h4>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">Zune and Windows Media Player integration on mobile devices</p>
+                </div>
+            </div>
+
+            <h3 style="color: #00ffff; font-size: 1.5rem; margin-bottom: 2rem; text-align: center;">Major Project Achievements</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                <div class="project-card">
+                    <h3>Meta "Project Orion" AR Glasses Launch</h3>
+                    <p>Led comprehensive testing for Meta's next-generation AR glasses prototype, covering power management, thermal analysis, battery life optimization, and AI integration. Created detailed test cases for AI voice prompts and app performance across YouTube, games, Facebook, and Instagram.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                        <strong style="color: #00ffff;">Key Contributions:</strong> Delivered performance reports on thermal thresholds, power usage patterns, and app startup times. Collaborated with development teams on bug triaging to ensure reliability for this highly complex AR project before launch deadline.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">AR Testing</span>
+                        <span class="tech-tag">Thermal Analysis</span>
+                        <span class="tech-tag">AI Validation</span>
+                        <span class="tech-tag">Performance Metrics</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3>AT&T 5G & IoT Ecosystem Validation</h3>
+                    <p>Oversaw comprehensive testing of AT&T's mobile and IoT device ecosystem across Android and iOS platforms, including smartphones, tablets, smartwatches, TV streaming apps, and emerging 5G technologies. Managed global cross-functional QA teams across multiple time zones.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                        <strong style="color: #00ffff;">Key Contributions:</strong> Collected and analyzed device KPIs, performance logs, and user experience metrics to influence test strategies. Delivered detailed QA reports to stakeholders, driving improved release readiness and product stability across the entire device portfolio.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">5G Testing</span>
+                        <span class="tech-tag">IoT Devices</span>
+                        <span class="tech-tag">Cross-Platform</span>
+                        <span class="tech-tag">Team Leadership</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3>AT&T Accessories Database System</h3>
+                    <p>Designed and managed a comprehensive FileMaker Pro database cataloging 500+ AT&T accessories with complete product data, images, SKUs, test results, and usage logs. Created streamlined check-in/check-out tracking system and automated reporting dashboards.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                        <strong style="color: #00ffff;">Key Contributions:</strong> Improved inventory visibility, reduced backlog issues, and enabled faster access across multiple teams. Enhanced overall testing efficiency through organized asset management and data-driven insights.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">FileMaker Pro</span>
+                        <span class="tech-tag">Database Design</span>
+                        <span class="tech-tag">Inventory Management</span>
+                        <span class="tech-tag">Process Improvement</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3>FirstNet MCPTT Demonstration Program</h3>
+                    <p>Led a 3-year demonstration program for the FirstNet Authority, showcasing mission-critical push-to-talk functionality for first responders. Coordinated full lab setups, device preparation, and comprehensive test execution both in-person and remotely.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                        <strong style="color: #00ffff;">Key Contributions:</strong> Presented test processes, criteria, and results to FirstNet stakeholders. Delivered detailed reports, logs, and recordings that earned recognition for professionalism, clear communication, and reliable outcomes while strengthening confidence in the FirstNet program.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">FirstNet</span>
+                        <span class="tech-tag">MCPTT</span>
+                        <span class="tech-tag">Stakeholder Management</span>
+                        <span class="tech-tag">Lab Setup</span>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <h3>Nvidia GeForce NOW 5G Network Slicing</h3>
+                    <p>Helped launch 5G network slicing technology for Nvidia's GeForce NOW cloud gaming platform on AT&T's 5G network. Tested and validated enhanced bandwidth allocation, reduced latency, and optimized network performance for seamless cloud gaming experiences.</p>
+                    <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                        <strong style="color: #00ffff;">Key Contributions:</strong> Validated higher bandwidth delivery and lower latency metrics for smoother gameplay. Contributed to successful deployment of cutting-edge 5G slicing technology that improved gaming performance and user experience.
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">5G Slicing</span>
+                        <span class="tech-tag">Cloud Gaming</span>
+                        <span class="tech-tag">Network Performance</span>
+                        <span class="tech-tag">Nvidia</span>
+                    </div>
+
+                </div>
+<div class="project-card">
+<h3>Carrier Device Certification Program</h3>
+<p>Led certification testing for hundreds of devices across AT&T's product portfolio, including smartphones, tablets, smartwatches, drones, headphones, robots, hotspots, and accessories. Validated hardware, software, and applications from major manufacturers including Apple, Google, Samsung, Motorola, LG, and emerging tech vendors.</p>
+<p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+    <strong style="color: #00ffff;">Key Contributions:</strong> Tested 500+ devices for carrier compliance and performance standards. Ensured seamless network integration, app compatibility, and hardware validation across diverse product categories. Collaborated directly with Google, Apple, and Samsung engineering teams to resolve critical certification issues.
+</p>
+<div class="tech-tags">
+    <span class="tech-tag">Carrier Certification</span>
+    <span class="tech-tag">Multi-Device Testing</span>
+    <span class="tech-tag">Hardware/Software Validation</span>
+    <span class="tech-tag">OEM Collaboration</span>
 </div>
 
-<div class="panel">
-  <h2>Shopping Cart</h2>
-  <div id="cart" class="empty-cart">Cart is empty</div>
-  <div class="button-group" style="margin-top: 16px;">
-    <button class="secondary" onclick="syncCart()">🔄 Sync Cart (PUT)</button>
-    <button class="danger" onclick="checkout()">💳 Checkout</button>
-  </div>
+            </div>
+
+        </div>
+
+    </section>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section id="projects">
+        <h2>Personal Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <h3>SauceDemo Automation Testing Suite</h3>
+                <p>Professional web testing automation demonstrating complete user workflows from login through checkout. Features visual element highlighting, human-like interactions, and cross-browser compatibility testing across Chrome, Edge, Firefox, and Safari.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                    <strong style="color: #00ffff;">Key Achievements:</strong> Implemented multi-browser support, visual demo mode with element highlighting, and industry-standard error handling practices.
+                </p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Selenium WebDriver</span>
+                    <span class="tech-tag">Cross-Browser Testing</span>
+                    <span class="tech-tag">Automation</span>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a href="https://www.loom.com/share/dc7bf490fa6b46b09f89202a77734db7" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1); 
+                              color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        ▶️ Watch Demo
+                    </a>
+                    <a href="https://github.com/ryanwdurham/SauceDemo-Automation" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                              color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        📂 View Code
+                    </a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <h3>Password Strength Validator</h3>
+                <p>Full-stack security application with real-time password strength analysis and interactive feedback. Built with Python backend validated by 48 comprehensive pytest tests, then created a beautiful web interface with live strength meter and instant feedback to help users create secure passwords.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                    <strong style="color: #00ffff;">Key Features:</strong> Real-time strength scoring out of 100, instant validation feedback, gamified security experience, and cross-platform validation logic.
+                </p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Pytest</span>
+                    <span class="tech-tag">HTML/CSS/JS</span>
+                    <span class="tech-tag">Security</span>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a href="https://ryanwdurham.github.io/Password_Validator/password_checker_app.html" target="_blank" rel="noopener noreferrer"
+style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1);
+color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3);
+transition: all 0.3s ease; font-size: 0.9rem;">
+🌐 Live Demo
+</a>
+<a href="https://www.loom.com/share/73ae4807e4744ad3a55c5df557e4a807" target="_blank" rel="noopener noreferrer" 
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                           color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                           transition: all 0.3s ease; font-size: 0.9rem;">
+▶️ Watch Demo
+</a>
+<a href="https://github.com/ryanwdurham/Password_Validator" target="_blank" rel="noopener noreferrer" 
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                           color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                           transition: all 0.3s ease; font-size: 0.9rem;">
+📂 View Code
+</a>
+</div>
 </div>
 
-</main>
+<div class="project-card">
+                <h3>Fake-Store API Checkout Tester</h3>
+                <p>Interactive API-first QA demo for exploring e-commerce checkout flows, assertions, and failure handling. Features full product grid, cart management, checkout simulation, and live API response console with pass/fail validations and timestamps.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                    <strong style="color: #00ffff;">Key Features:</strong> Simulated API failures for error handling demos, login/auth flow demonstration, live assertion tracking, and simple UI focused on API behavior and validation testing.
+                </p>
+                <div class="tech-tags">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">FakeStore API</span>
+                    <span class="tech-tag">API Testing</span>
+                    <span class="tech-tag">QA Demo</span>
+		<span class="tech-tag">HTML /CSS</span>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a href="https://ryanwdurham.github.io/Fake-Store-API-Checkout-Tester/" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1); 
+                              color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        🌐 Live Demo
+                    </a>
+                    <a href="https://github.com/ryanwdurham/Fake-Store-API-Checkout-Tester" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                              color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        📂 View Code
+                    </a>
+                </div>
+            </div>
 
-<div class="panel console-wrapper">
-  <h2>API Response & Assertions</h2>
-  <div class="api-console" id="console">Waiting for API calls...</div>
-</div>
+<div class="project-card">
+                <h3>Nebula Music Player</h3>
+                <p>Sleek, futuristic web-based music player with stunning visual themes and smooth crossfade transitions. Inspired by classic players like Winamp but with a modern twist. Supports all major audio formats with full playlist management and seamless track transitions.  Just click "Add Music", select your audio files, and start listening! No installation or sign-up required.</p>
+                <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                    <strong style="color: #00ffff;">Key Features:</strong> 10-second crossfade between tracks, 10 customizable themes (Nebula, Cyberpunk, Ocean, Matrix, Fire, etc.), universal audio support (MP3, WAV, FLAC, OGG), privacy-first design with all music staying on your device.
+                </p>
+                <div class="tech-tags">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Web Audio API</span>
+                    <span class="tech-tag">HTML/CSS</span>
+                    <span class="tech-tag">Media Player</span>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <a href="https://ryanwdurham.github.io/Nebula-Music-Player/" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1); 
+                              color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        🌐 Live Demo
+                    </a>
+                    <a href="https://github.com/ryanwdurham/Nebula-Music-Player" target="_blank" rel="noopener noreferrer" 
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                              color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                              transition: all 0.3s ease; font-size: 0.9rem;">
+                        📂 View Code
+                    </a>
+                </div>
+            </div>
+<div class="project-card">
+            <h3>Fantasy Character Generator</h3>
+            <p>Interactive RPG character creator featuring AI-generated portraits and dynamic backstories. Users customize characters with races, classes, alignments, and personality traits inspired by D&D, then generate unique portraits and auto-written bios bringing their fantasy heroes to life.</p>
+            <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                <strong style="color: #00ffff;">Key Features:</strong> AI-powered portrait generation, extensive customization options (dozens of races and classes), dynamic bio creation, downloadable character sheets, and immersive fantasy-themed UI.
+            </p>
+            <div class="tech-tags">
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">HTML/CSS</span>
+                <span class="tech-tag">AI Image API</span>
+                <span class="tech-tag">Tailwind CSS</span>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <a href="https://ryanwdurham.github.io/Fantasy-Character-Generator/" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1); 
+                          color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); 
+                          transition: all 0.3s ease; font-size: 0.9rem;">
+                    🌐 Live Demo
+                </a>
+                <a href="https://github.com/ryanwdurham/Fantasy-Character-Generator" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                          color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                          transition: all 0.3s ease; font-size: 0.9rem;">
+                    📂 View Code
+                </a>
+            </div>
+
+        </div>
 
 
+
+        <div class="project-card">
+            <h3>Fright Finder - Horror Movie Recommendations</h3>
+            <p>Personalized horror movie recommendation engine that helps users discover their next scary movie based on mood, subgenre preferences, and scare intensity. Features intelligent filtering, movie ratings, and streaming availability to deliver tailored horror recommendations.</p>
+            <p style="margin-top: 0.75rem; font-size: 0.95rem; color: #888;">
+                <strong style="color: #00ffff;">Key Features:</strong> Smart filtering by subgenre and intensity, real-time movie database integration, responsive design with dark horror-themed UI, and personalized recommendations based on user preferences.
+            </p>
+            <div class="tech-tags">
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">Movie API</span>
+                <span class="tech-tag">HTML/CSS</span>
+                <span class="tech-tag">Filtering Algorithms</span>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <a href="https://ryanwdurham.github.io/Horror_Movie_Reccomendations/" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1); 
+                          color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3); 
+                          transition: all 0.3s ease; font-size: 0.9rem;">
+                    🌐 Live Demo
+                </a>
+                <a href="https://github.com/ryanwdurham/Horror_Movie_Reccomendations" target="_blank" rel="noopener noreferrer" 
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03); 
+                          color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); 
+                          transition: all 0.3s ease; font-size: 0.9rem;">
+                    📂 View Code
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="exploring">
+    <h2>Currently Exploring</h2>
+    <div class="about-content" style="max-width: 900px;">
+        <p>
+            I'm actively expanding my technical toolkit by diving deep into modern development technologies and AI-driven solutions. 
+            My current focus areas include building intelligent automation frameworks with Python, developing dynamic web applications 
+            with React and HTML, and exploring the intersection of AI and quality engineering.
+        </p>
+        <p style="margin-top: 1rem;">
+            I'm particularly excited about leveraging large language models and AI agents to revolutionize testing workflows, 
+            as well as experimenting with "vibe coding" approaches that blend rapid prototyping with creative problem-solving. 
+            Each project is an opportunity to push boundaries and discover how emerging technologies can elevate software quality 
+            and development efficiency.
+        </p>
+    </div>
+    
+    <div class="skills-grid" style="margin-top: 2rem;">
+        <div class="skill-category">
+            <h3>AI & Machine Learning</h3>
+            <ul>
+                <li>Large Language Models</li>
+                <li>AI-Powered Automation</li>
+                <li>Prompt Engineering</li>
+                <li>ML Testing Strategies</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Modern Development</h3>
+            <ul>
+                <li>React & Modern JavaScript</li>
+                <li>Python Development</li>
+                <li>API Integration</li>
+                <li>Full-Stack Projects</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Automation & Tools</h3>
+            <ul>
+                <li>Test Automation Frameworks</li>
+                <li>CI/CD Pipelines</li>
+                <li>DevOps Practices</li>
+                <li>Workflow Optimization</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Innovation Focus</h3>
+            <ul>
+                <li>App Development</li>
+                <li>Rapid Prototyping</li>
+                <li>Tech Trend Analysis</li>
+                <li>Continuous Learning</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="skills">
+    <h2>Technical Skills</h2>
+    <div class="skills-grid">
+        <div class="skill-category">
+            <h3>QA & Testing</h3>
+            <ul>
+                <li>Manual & Automated Testing</li>
+                <li>TestRail & Jira</li>
+                <li>Bug Triage & Debugging</li>
+                <li>Test Case Design</li>
+                <li>Regression Testing</li>
+<li>Root Cause Analysis</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Platforms & Devices</h3>
+            <ul>
+                <li>Android & iOS Testing</li>
+<li>Tablets and Wearables</li>
+                <li>IoT Device Validation</li>
+                <li>AR/VR Technology</li>
+                <li>5G & Mobile Networks</li>
+              
+<li>Windows & macOS</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Technical Tools</h3>
+            <ul>
+                <li>Web and App development</li>
+                <li>Shell Commands</li>
+                <li>Python Programming</li>
+<li>Selenium and Appium </li>
+                <li>Log Analysis</li>
+                <li>Performance Metrics</li>
+            </ul>
+        </div>
+
+        <div class="skill-category">
+            <h3>Leadership & Process</h3>
+            <ul>
+                <li>Agile/SDLC</li>
+                <li>Cross-Team Collaboration</li>
+                <li>Global Team Management</li>
+                <li>Data-Driven Insights</li>
+                <li>Stakeholder Reporting</li>
+<li>Mentoring and Training</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Get In Touch</h2>
+    <p style="color: #b0b0b0; margin-bottom: 2rem;">
+        I'm always open to discussing new projects, opportunities, or collaborations.
+    </p>
+    <div class="contact-links">
+        <a href="mailto:ryanwdurham@yahoo.com">Email</a>
+        <a href="https://linkedin.com/in/ryan-durham-9b254048" target="_blank">LinkedIn</a>
+        <a href="tel:+14252708480">Phone: (425) 270-8480</a>
+        <a href="https://github.com/ryanwdurham" target="_blank">Github</a>
+        <a href="/resume.pdf" target="_blank">Resume</a>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 Ryan Durham. Built with HTML, CSS & JavaScript.</p>
+</footer>
 
 <script>
-const API = "https://fakestoreapi.com";
-const cart = [];
-const cache = {};
-let token = null;
-
-// Toast Notification System
-function showToast(message, type = 'info', title = '') {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  
-  const icons = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️'
-  };
-  
-  const titles = {
-    success: title || 'Success',
-    error: title || 'Error',
-    warning: title || 'Warning',
-    info: title || 'Info'
-  };
-  
-  toast.innerHTML = `
-    <div class="toast-icon">${icons[type]}</div>
-    <div class="toast-content">
-      <div class="toast-title">${titles[type]}</div>
-      <div class="toast-message">${message}</div>
-    </div>
-    <button class="toast-close" onclick="removeToast(this)">×</button>
-  `;
-  
-  container.appendChild(toast);
-  
-  setTimeout(() => {
-    removeToast(toast.querySelector('.toast-close'));
-  }, 4000);
-}
-
-function removeToast(btn) {
-  const toast = btn.parentElement;
-  toast.classList.add('removing');
-  setTimeout(() => toast.remove(), 300);
-}
-
-// API logging and assertions
-function log({method, url, status, req, res, error, startTime}) {
-  const endTime = new Date();
-  const duration = startTime ? endTime - startTime : 0;
-
-  let outcome = "";
-  if (error) outcome = "❌ API Failed";
-  else if (status >= 400) outcome = "❌ API Error";
-  else outcome = "✅ Success";
-
-  // Compute total cart value if products exist
-  let total = null;
-  if (req && req.products) {
-    total = req.products.reduce((sum, p) => {
-      const prod = cache[p.productId];
-      return sum + (prod ? prod.price * p.quantity : 0);
-    }, 0);
-  }
-
-  // Enrich request with product titles for clarity
-  let displayReq = req;
-  if (req && req.products) {
-    displayReq = {...req};
-    displayReq.products = req.products.map(p => {
-      const prod = cache[p.productId];
-      return {
-        productId: p.productId,
-        title: prod ? prod.title : "Unknown",
-        quantity: p.quantity,
-        price: prod ? prod.price : "N/A"
-      };
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-  }
 
-  // Assertions
-  const checks = [
-    {name: "Status < 400", ok: status && status < 400},
-    {name: "Response not empty", ok: res != null},
-    {name: "Cart total matches sum", ok: total === null || total >= 0}
-  ];
-
-  const assertionsHTML = checks.map(c =>
-    `<span class="${c.ok ? 'pass' : 'fail'}">${c.ok ? '✓' : '✗'} ${c.name}</span>`
-  ).join("<br/>");
-
-  document.getElementById("console").innerHTML = `
-<b>Time:</b> ${endTime.toLocaleTimeString()}<br/>
-<b>Duration:</b> ${duration} ms<br/>
-<b>Method:</b> ${method}<br/>
-<b>Endpoint:</b> ${url}<br/>
-<b>Status:</b> ${status ? status : "ERROR"}<br/>
-<b>Outcome:</b> ${outcome}<br/>
-${displayReq ? `<b>Request:</b><pre>${JSON.stringify(displayReq,null,2)}</pre>` : ""}
-<b>Response:</b><pre>${res ? JSON.stringify(res,null,2) : error}</pre>
-${total !== null ? `<b>Total Cart Value:</b> $${total.toFixed(2)}<br/>` : ""}
-<b>Assertions:</b><br/>${assertionsHTML}
-`;
-}
-
-// Helper to simulate failure
-function failMode(url){
-  return document.getElementById("failToggle").checked ? url + "_fail_test_404" : url;
-}
-
-// LOGIN
-async function login() {
-showToast("Successfully logged in!", "success", "Authentication");
-  const url = `${API}/auth/login`;
-  const body = { username: "mor_2314", password: "83r5^_" };
-  const startTime = new Date();
-  try {
-    const r = await fetch(url, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
-    const d = await r.json();
-    token = d.token;
-    log({method:"POST", url, status:r.status, req:body, res:d, startTime});
-  } catch(err) {
-showToast("Login failed. Please try again.", "error", "Authentication");
-    log({method:"POST", url, error:err, startTime});
-  }
-}
-
-// LOAD ALL PRODUCTS OR FILTERED BY CATEGORY
-async function loadProducts(category=null) {
-  let url = category ? `${API}/products/category/${category}` : `${API}/products`;
-  url = failMode(url);
-  const startTime = new Date();
-  try {
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    log({method:"GET", url, status:r.status, res:d, startTime});
-
-    const p = document.getElementById("products"); p.innerHTML="";
-    (Array.isArray(d) ? d : []).forEach(x=>{
-      cache[x.id] = x;
-      p.innerHTML += `
-        <div class="product">
-          <img src="${x.image}">
-          <b>${x.title}</b><br/>
-          <span class="price">$${x.price}</span><br/>
-          <button onclick="add(${x.id})">➕ Add</button>
-          <button onclick="viewDetails(${x.id})">👁️ Details</button>
-        </div>`;
+    // Add scroll effect to navbar
+    window.addEventListener('scroll', () => {
+        const nav = document.querySelector('nav');
+        if (window.scrollY > 100) {
+            nav.style.background = 'rgba(10, 10, 10, 0.98)';
+        } else {
+            nav.style.background = 'rgba(10, 10, 10, 0.95)';
+        }
     });
-  } catch(err){
-    log({method:"GET", url, error:err, startTime});
-  }
-}
 
-// FETCH PRODUCT DETAILS
-async function viewDetails(id) {
-  let url = `${API}/products/${id}`;
-  url = failMode(url);
-  const startTime = new Date();
-  try {
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    log({method:"GET", url, status:r.status, res:d, startTime});
-    alert(`Product Details:\nTitle: ${d.title}\nPrice: $${d.price}\nCategory: ${d.category}\nRating: ${d.rating.rate} (${d.rating.count} reviews)`);
-  } catch(err){
-    log({method:"GET", url, error:err, startTime});
-    showToast("Failed to fetch product details", "error");
-  }
-}
+    // Theme Color Picker
+    const themeColors = document.querySelectorAll('.theme-color');
 
-// LOAD CATEGORIES
-async function loadCategories() {
-  let url = `${API}/products/categories`;
-  url = failMode(url);
-  const startTime = new Date();
-  try {
-    const r = await fetch(url);
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    log({method:"GET", url, status:r.status, res:d, startTime});
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        const themeData = JSON.parse(savedTheme);
+        applyTheme(themeData.primary, themeData.secondary);
+        themeColors.forEach(color => {
+            if (color.dataset.primary === themeData.primary) {
+                color.classList.add('active');
+            } else {
+                color.classList.remove('active');
+            }
+        });
+    }
 
-    const catDiv = document.getElementById("categories"); 
-    catDiv.innerHTML = `<button onclick="loadProducts()">All</button>`;
-    d.forEach(c => {
-      catDiv.innerHTML += `<button onclick="loadProducts('${c}')">${c}</button>`;
+    themeColors.forEach(color => {
+        color.addEventListener('click', function() {
+            const primaryColor = this.dataset.primary;
+            const secondaryColor = this.dataset.secondary;
+            
+            themeColors.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            
+            applyTheme(primaryColor, secondaryColor);
+            
+            localStorage.setItem('theme', JSON.stringify({
+                primary: primaryColor,
+                secondary: secondaryColor
+            }));
+        });
     });
-  } catch(err){
-    log({method:"GET", url, error:err, startTime});
-  }
+
+    function applyTheme(primary, secondary) {
+        const style = document.createElement('style');
+        style.id = 'dynamic-theme';
+        
+        const existingStyle = document.getElementById('dynamic-theme');
+        if (existingStyle) {
+            existingStyle.remove();
+        }
+        
+        style.innerHTML = `
+            .hero h1, h2 {
+                background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            
+            .hero .cta {
+                background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%);
+            }
+            
+            .hero .cta:hover {
+                box-shadow: 0 10px 30px ${primary}40;
+            }
+            
+            nav a:hover {
+                color: ${primary};
+            }
+            
+            nav a::after {
+                background: linear-gradient(90deg, ${primary}, ${secondary});
+            }
+            
+            .project-card h3, .skill-category h3 {
+                color: ${primary};
+            }
+            
+            .project-card:hover {
+                border-color: ${primary}80;
+            }
+            
+            .tech-tag {
+                background: ${primary}1A;
+                color: ${primary};
+                border: 1px solid ${primary}4D;
+            }
+            
+            .skill-category li::before {
+                color: ${primary};
+            }
+            
+            .contact-links a {
+                border: 1px solid ${primary}4D;
+                color: ${primary};
+            }
+            
+            .contact-links a:hover {
+                background: ${primary}1A;
+                border-color: ${primary};
+            }
+            
+            .hero::before {
+                background: 
+                    radial-gradient(circle at 20% 50%, ${primary}1A 0%, transparent 50%),
+                    radial-gradient(circle at 80% 50%, ${secondary}1A 0%, transparent 50%);
+            }
+            
+            nav, footer {
+                border-color: ${primary}1A;
+            }
+            
+            .project-card, .skill-category {
+                border: 1px solid ${primary}1A;
+            }
+            
+            .project-card a:hover {
+                background: ${primary}20 !important;
+                border-color: ${primary} !important;
+                transform: translateY(-2px);
+            }
+img[alt="Ryan Durham"] {
+                    border-color: ${primary} !important;
+                    box-shadow: 0 0 30px ${primary}4D !important;
+                }
+
+strong[style*="color: #00ffff"], 
+h4[style*="color: #00ffff"] {
+    color: ${primary} !important;
 }
-
-// CART MANAGEMENT
-function add(id){
-  const e = cart.find(i => i.id===id);
-  e ? e.qty++ : cart.push({id, qty:1});
-  render();
-  flashProduct(id);
-}
-function iQty(id,n){ const i = cart.find(x=>x.id===id); if(i && i.qty+n>0){ i.qty+=n; render(); } }
-function del(id){ cart.splice(cart.findIndex(x=>x.id===id),1); render(); }
-function render(){
-  const c = document.getElementById("cart");
-  if(!cart.length){ c.innerHTML = '<div class="empty-cart">Cart is empty</div>'; return; }
-  let t=0;
-  c.innerHTML = cart.map(i=>{
-    const p = cache[i.id];
-    const s = p.price*i.qty; t+=s;
-    return `<div class="cart-item">
-      <b>${p.title}</b>
-      <div style="margin-top: 8px;">
-        <button onclick="iQty(${i.id},-1)">−</button>
-        <span style="margin: 0 8px; font-weight: 600;">${i.qty}</span>
-        <button onclick="iQty(${i.id},1)">+</button>
-        <span style="float: right; color: #10b981; font-weight: 700;">$${s.toFixed(2)}</span>
-        <button class="danger" onclick="del(${i.id})" style="float: right; margin-right: 8px;">🗑️</button>
-      </div>
-    </div>`;
-  }).join("") + `<hr><div style="text-align: right; font-size: 18px;"><b>Total: <span style="color: #10b981;">$${t.toFixed(2)}</span></b></div>`;
-}
-
-// SYNC CART VIA PUT
-async function syncCart() {
-  if (!cart.length) { showToast("Cart is empty. Add items first!", "warning", "Cart"); }
-
-  let url = `${API}/carts/1`;
-  if (document.getElementById("failToggle").checked) url += "_fail_test_404";
-
-  const body = {
-    userId: 1,
-    date: new Date().toISOString(),
-    products: cart.map(i => ({productId: i.id, quantity: i.qty}))
-  };
-
-  const startTime = new Date();
-  try {
-    const r = await fetch(url, {
-      method: "PUT",
-      headers: {"Content-Type": "application/json", "Authorization": token ? `Bearer ${token}` : ""},
-      body: JSON.stringify(body)
-    });
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    log({method:"PUT", url, status:r.status, req:body, res:d, startTime});
-    showToast("Cart synced successfully!", "success", "Sync");
-  } catch(err) {
-    log({method:"PUT", url, error:err, startTime});
-    showToast("Cart sync failed. Check API console.", "error", "Sync");
-  }
-}
-
-// CHECKOUT
-async function checkout() {
-  if(!cart.length){ showToast("Cart is empty. Add items first!", "warning", "Checkout"); return; }
-  let url = failMode(`${API}/carts`);
-  const body = { userId:1, date:new Date().toISOString(), products:cart.map(i=>({productId:i.id, quantity:i.qty})) };
-  const startTime = new Date();
-  try {
-    const r = await fetch(url, { method:"POST", headers:{"Content-Type":"application/json","Authorization":token?`Bearer ${token}`:""}, body: JSON.stringify(body) });
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const d = await r.json();
-    log({method:"POST", url, status:r.status, req:body, res:d, startTime});
-    showToast("Checkout completed successfully! 🎉", "success", "Checkout");
-  } catch(err) {
-    log({method:"POST", url, error:err, startTime});
-    showToast("Checkout failed. See API console.", "error", "Checkout");
-  }
-}
-
-// Flash product card on Add
-function flashProduct(id){
-  const el = document.querySelector(`.product button[onclick="add(${id})"]`).parentElement;
-  el.style.transition = "all 0.3s ease";
-  el.style.backgroundColor = "rgba(167, 139, 250, 0.2)";
-  el.style.borderColor = "#a78bfa";
-  setTimeout(()=> {
-    el.style.backgroundColor = "rgba(15, 23, 42, 0.6)";
-    el.style.borderColor = "rgba(100, 116, 139, 0.3)";
-  }, 400);
-}
+        `;
+        
+        document.head.appendChild(style);
+    }
 </script>
 </body>
-</html>
+</html>\
