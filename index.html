@@ -142,6 +142,8 @@
         .theme-orange { background: linear-gradient(135deg, #f97316, #eab308); color: #f97316; }
         .theme-red { background: linear-gradient(135deg, #ef4444, #f43f5e); color: #ef4444; }
         .theme-blue { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: #3b82f6; }
+        .theme-lime { background: linear-gradient(135deg, #aaff00, #00ff88); color: #aaff00; }
+        
 
         .hero {
             min-height: 100vh;
@@ -217,12 +219,35 @@ scroll-margin-top: 100px;
 
         h2 {
             font-size: 2.5rem;
-            margin-bottom: 3rem;
+            margin-bottom: 3.5rem;
+            margin-left: auto;
+            margin-right: auto;
             text-align: center;
             background: linear-gradient(135deg, #00ffff 0%, #0080ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
+            display: table;
+            padding-bottom: 0.85rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 5%;
+            width: 90%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ffff 30%, #0080ff 70%, transparent);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 128, 255, 0.5);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 128, 255, 0.5); }
+            50% { opacity: 0.65; box-shadow: 0 0 14px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 128, 255, 0.8); }
         }
 
         .about-content {
@@ -451,6 +476,8 @@ scroll-margin-top: 100px;
             <div class="theme-color theme-orange" data-primary="#f97316" data-secondary="#eab308" title="Orange"></div>
             <div class="theme-color theme-red" data-primary="#ef4444" data-secondary="#f43f5e" title="Red"></div>
             <div class="theme-color theme-blue" data-primary="#3b82f6" data-secondary="#8b5cf6" title="Blue"></div>
+            <div class="theme-color theme-lime" data-primary="#aaff00" data-secondary="#00ff88" title="Toxic Lime"></div>
+            
         </div>
         <ul>
             <li><a href="#about">About</a></li>
@@ -467,7 +494,7 @@ scroll-margin-top: 100px;
         <h1>Ryan Durham</h1>
         <p class="tagline">Senior QA Engineer | Device & App Testing Specialist | App & Software Development | 15+ Years Experience</p>
         <a href="#highlights" class="cta">View My Work</a>
-        <img src="ryguy.png" alt="Ryan Durham" style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; object-position: center top; margin: 2rem 0 2rem 0; border: 3px solid #00ffff; box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);">
+        <img src="tech1.JPG" alt="Ryan Durham" style="width: 420px; max-width: 90vw; height: auto; border-radius: 16px; object-fit: cover; object-position: center top; margin: 2rem 0 2rem 0; box-shadow: 0 8px 40px rgba(0, 255, 255, 0.25), 0 2px 16px rgba(0,0,0,0.5);">
     </section>
 
     <section id="about">
@@ -477,20 +504,19 @@ scroll-margin-top: 100px;
                 Senior Test Engineering Lead specializing in validation, automation, and release readiness across complex hardware and software ecosystems.
 </p>
    <p style="margin-top: 1rem;"></p>
-                Seasoned QA and Test Engineer with over 15 years of experience testing hardware and software
-                across Android, iOS, and IoT ecosystems. I've successfully led end-to-end device testing for mobile
+                Seasoned QA and Test Engineer with over 15 years of  expertise in end-to-end ecosystem validation, spanning hardware interoperability, cross-platform software (Android/iOS), and complex network architectures (5G, LTE, Wi-Fi, IoT). I've successfully led end-to-end device testing for mobile
                 phones, tablets, smartwatches, AR smart glasses, and connected devices at companies like Meta, AT&T, Microsoft, and other major tech vendors.
             </p>
             <p style="margin-top: 1rem;">
                 I'm passionate about ensuring seamless customer experiences through manual and automated testing,
                 bug triage, and cross-functional collaboration with global teams. My expertise spans from next-gen AR devices
-                to 5G mobile technology, always focused on data-driven quality improvements and continuous optimization. </p>
+                to 5G mobile technology, and AI development, I am always focused on data-driven quality improvements and continuous optimization. </p>
                 <p style="margin-top: 1rem;">Beyond testing, I've expanded into full-stack development — building web apps, browser-based games, and 
                     AI-powered tools — bridging the gap between quality engineering and modern software development.</p>
          
             <p style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0, 255, 255, 0.1);">
                 <strong style="color: #00ffff;">Beyond the Tech:</strong> When I'm not diving into code or testing devices, 
-                you'll find me hiking the beautiful PNW trails, creating music, gaming, or getting lost in a good book. 
+                you'll find me hiking and exploring the beautiful Pacific Northwest, creating music, gaming, or getting lost in a good book. 
                 I'm an avid camper and outdoor enthusiast who believes the best problem-solving often happens away from the screen. 
                 I'm constantly curious about emerging technologies and love staying on the cutting edge of what's next in tech.
             </p>
@@ -781,7 +807,7 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📶</div>
                     <h4 style="color: #00ffff; margin-bottom: 0.5rem;">AT&T Networks</h4>
-                    <p style="color: #b0b0b0; font-size: 0.95rem;">4G, LTE, and 5G network testing, certification, and performance optimization</p>
+                    <p style="color: #b0b0b0; font-size: 0.95rem;">4G, LTE, 5G, and FirstNet network testing, certification, and performance optimization</p>
                 </div>
 
                 <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(0, 255, 255, 0.1); transition: all 0.3s ease;">
@@ -824,6 +850,14 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                         <span class="tech-tag">AI Validation</span>
                         <span class="tech-tag">Performance Metrics</span>
                     </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="https://www.meta.com/emerging-tech/orion/?srsltid=AfmBOooELFlMfOi29gOS9ZBQD9hakzzuBWtP8CSGOsrJTpbpdCsYAzt2" target="_blank" rel="noopener noreferrer"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1);
+                                  color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3);
+                                  transition: all 0.3s ease; font-size: 0.9rem;">
+                            🥽 Check Out the Orion AR Glasses
+                        </a>
+                    </div>
                 </div>
 
             <div class="project-card">
@@ -856,6 +890,14 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                         <span class="tech-tag">Stakeholder Management</span>
                         <span class="tech-tag">Lab Setup</span>
                     </div>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="https://www.firstnet.com/mission-critical.html" target="_blank" rel="noopener noreferrer"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1);
+                                  color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3);
+                                  transition: all 0.3s ease; font-size: 0.9rem;">
+                            🛡️ Learn About FirstNet MCPTT
+                        </a>
+                    </div>
                 </div>
 
                 <div class="project-card">
@@ -870,7 +912,20 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                         <span class="tech-tag">Network Performance</span>
                         <span class="tech-tag">Nvidia</span>
                     </div>
-
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                        <a href="https://www.nvidia.com/en-us/geforce-now/" target="_blank" rel="noopener noreferrer"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(0, 255, 255, 0.1);
+                                  color: #00ffff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 255, 255, 0.3);
+                                  transition: all 0.3s ease; font-size: 0.9rem;">
+                            🎮 Nvidia GeForce NOW
+                        </a>
+                        <a href="https://www.calsoftinc.com/blog/5g-network-slicing-a-gamechanger-for-telcos" target="_blank" rel="noopener noreferrer"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: rgba(255, 255, 255, 0.03);
+                                  color: #e0e0e0; text-decoration: none; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);
+                                  transition: all 0.3s ease; font-size: 0.9rem;">
+                            📡 What is Network Slicing?
+                        </a>
+                    </div>
                 </div>
 
 
@@ -943,10 +998,10 @@ transition: all 0.3s ease; font-size: 0.9rem;">
     <h2>Currently Exploring</h2>
     <div class="about-content" style="max-width: 900px;">
         <p>
-            I’m always looking to grow my technical skill set and stay current with modern development and AI technologies. Lately, I’ve been focused on building automation frameworks in Python, creating web apps with React and HTML, and learning how AI can be applied to quality engineering.
+          My current focus is definitely on AI-driven design and rapid prototyping and building. I’m a big believer in the 'vibe coding' movement, using LLMs to automate the boring stuff :) so I can focus on logic, planning, and design.  I’m currently experimenting with agents and LLMs to turn ideas into real, working software faster than ever.
         </p>
         <p style="margin-top: 1rem;">
-            What really excites me is using large language models and AI agents to improve how we design and run tests. I also enjoy experimenting with fast, creative “vibe coding” approaches that balance rapid prototyping with problem-solving. Every project is a chance to learn something new and find better ways to improve software quality and development speed.
+           For me, it’s all about  balancing the speed of a raw idea with, design, creation, and using the troubleshooting and quality engineering skills I’ve spent years refining.  There’s nothing better than watching an idea move from a spark in your head to a working program in your hands — especially when you built it!
         </p>
     </div>
     
@@ -1087,6 +1142,17 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                 -webkit-text-fill-color: transparent;
                 background-clip: text;
             }
+
+            h2::after {
+                background: linear-gradient(90deg, transparent, ${primary} 30%, ${secondary} 70%, transparent);
+                box-shadow: 0 0 8px ${primary}CC, 0 0 20px ${secondary}80;
+                animation: glowPulse-themed 3s ease-in-out infinite;
+            }
+
+            @keyframes glowPulse-themed {
+                0%, 100% { opacity: 1; box-shadow: 0 0 8px ${primary}CC, 0 0 20px ${secondary}80; }
+                50% { opacity: 0.65; box-shadow: 0 0 14px ${primary}, 0 0 30px ${secondary}CC; }
+            }
             
             .hero .cta {
                 background: linear-gradient(135deg, ${primary} 0%, ${secondary} 100%);
@@ -1152,8 +1218,8 @@ transition: all 0.3s ease; font-size: 0.9rem;">
                 transform: translateY(-2px);
             }
 img[alt="Ryan Durham"] {
-                    border-color: ${primary} !important;
-                    box-shadow: 0 0 30px ${primary}4D !important;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 40px ${primary}40, 0 2px 16px rgba(0,0,0,0.5) !important;
                 }
 
 strong[style*="color: #00ffff"], 
